@@ -1,0 +1,6 @@
+.nuxt/
+.output/
+node_modules/
+package-lock.json
+# Markdown belgeleri elle biçimlenir (uygulama deposuyla aynı kural)
+*.md

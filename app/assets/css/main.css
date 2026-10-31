@@ -1,0 +1,140 @@
+@import '@fontsource-variable/nunito/index.css';
+@import 'tailwindcss';
+
+/*
+ * Colors are the app's design tokens (docs/design/s2-02-tasarim-sistemi.md 1.2, version 1.4).
+ * Screen and cell backgrounds swap between themes, exactly as in the app ("zemin ters çevrimi").
+ */
+:root {
+  --screen: #f4f2ef;
+  --cell: #ffffff;
+  --border: #e2dfda;
+  --border-strong: #7e7973;
+  --text-primary: #1c1a18;
+  --text-secondary: #625e59;
+  --accent: #1f5e6b;
+  --on-accent: #ffffff;
+  --accent-soft: #cfe3e7;
+  --warning-surface: #fff4e0;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --screen: #0f0e0d;
+    --cell: #1c1b19;
+    --border: #34322f;
+    --border-strong: #8c8883;
+    --text-primary: #f2f0ed;
+    --text-secondary: #ada9a3;
+    --accent: #8fd3de;
+    --on-accent: #0a2a30;
+    --accent-soft: #33545b;
+    --warning-surface: #3a2a0a;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Nunito Variable', ui-rounded, system-ui, sans-serif;
+  --color-screen: var(--screen);
+  --color-cell: var(--cell);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-note: var(--warning-surface);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-screen font-sans text-ink antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+
+  a {
+    @apply underline-offset-4;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* Ionicons ship unstyled shapes; filled parts take the text color. */
+.ionicon {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.ionicon-fill-none {
+  fill: none;
+}
+
+.ionicon-stroke-width {
+  stroke-width: 32px;
+}
+
+/* Legal pages render approved Markdown (app/legal/*.md) without a typography plugin. */
+.legal-text h1 {
+  @apply text-3xl font-bold sm:text-4xl;
+}
+
+.legal-text h2 {
+  @apply mt-10 text-2xl font-bold;
+}
+
+.legal-text h3 {
+  @apply mt-8 text-lg font-bold;
+}
+
+.legal-text h4 {
+  @apply mt-6 font-bold;
+}
+
+.legal-text p,
+.legal-text ul,
+.legal-text ol,
+.legal-text table {
+  @apply mt-4 leading-7;
+}
+
+.legal-text ul {
+  @apply list-disc pl-6;
+}
+
+.legal-text ol {
+  @apply list-decimal pl-6;
+}
+
+.legal-text li + li {
+  @apply mt-2;
+}
+
+.legal-text a {
+  @apply text-accent underline;
+}
+
+.legal-text table {
+  @apply block w-full overflow-x-auto text-sm;
+}
+
+.legal-text th,
+.legal-text td {
+  @apply border border-line p-2 text-left align-top;
+}
