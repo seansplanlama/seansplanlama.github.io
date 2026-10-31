@@ -105,6 +105,6 @@ Uygulamanın ekranı değişirse görüntüler aynı komutlarla yenilenir.
 
 4. Yeni depoda Settings > Pages > Build and deployment > Source: **GitHub Actions**.
 5. İş akışı (`Yayın`) ilk push'ta çalışır; bitince site `https://seansplanlama.github.io` adresinde açılır.
-6. Sonra: uygulamada `LANDING_URL` (`src/services/support/index.ts`, bugün `https://example.com`) gerçek adresle değişir (mobile-developer); gizlilik politikası, mağaza konsolları ve sosyal medya profilleri bu adresi kullanır. Uygulama deposundaki `landing/` klasörü bundan sonra kaldırılabilir; `docs/architecture.md` yeni depoyu gösterir.
+6. Uygulamadaki `LANDING_URL` (`src/services/support/index.ts`) 31 Ekim 2026'dan beri bu adres, gizlilik politikası taslağı 0.5 da; mağaza konsolları ve sosyal medya profilleri de bu adresi kullanır. Uygulama deposundaki `landing/` klasörü bundan sonra kaldırılabilir; `docs/architecture.md` yeni depoyu gösterir.
 
 Site yayına girdikten sonra da duyurulmaz: duyuru, form ve yasal metinler S13-07 onayıyla aynı gün açılır (taslak 5.1, adım 7).
