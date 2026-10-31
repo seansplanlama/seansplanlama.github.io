@@ -7,8 +7,9 @@
   },
   "scripts": {
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "nuxt generate && node scripts/check-site.mjs",
     "preview": "python3 -m http.server 4173 -d .output/public",
+    "check": "node scripts/check-site.mjs",
     "typecheck": "nuxt typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
