@@ -74,9 +74,9 @@ const professionGroups: {
   {
     icon: 'trophyOutline',
     title: 'Spor',
-    professions: 'Antrenör, personal trainer, pilates ve yoga eğitmeni.',
+    professions: 'Antrenör, personal trainer, pilates ve yoga eğitmeni, fizyoterapist.',
     words:
-      'Antrenörde sporcu ve antrenman, personal trainer’da danışan ve seans, pilates ve yogada öğrenci ve ders.',
+      'Antrenörde sporcu ve antrenman, personal trainer’da ve fizyoterapistte danışan ve seans, pilates ve yogada öğrenci ve ders.',
     example:
       '12 seanslık paketi bir kez gir, yapılan her seans paketten düşer. Yağmur yağdıysa o günün antrenmanlarını tek seferde iptal et.',
     image: '/gorseller/meslek-spor.webp',
