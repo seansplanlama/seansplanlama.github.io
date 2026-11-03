@@ -40,11 +40,50 @@ if (!existsSync(out)) {
 }
 
 // Files GitHub Pages and the stores need.
-for (const file of ['.nojekyll', 'favicon.svg', 'paylasim.png']) {
+for (const file of ['.nojekyll', 'favicon.svg', 'paylasim.png', 'app-ads.txt']) {
   if (!existsSync(join(out, file))) fail(`Missing ${file}`);
 }
 for (const path of ['/', ...legalPages.map((page) => page.path)]) {
   if (!existsSync(join(out, pageFile(path)))) fail(`Missing page ${path}`);
+}
+
+// app-ads.txt (S12-26): AdMob verifies the publisher with it at the root of the developer
+// website in the store listings. One Google line and nothing else: Seans sells its ad space
+// only through its own AdMob account. The publisher ID is the one in the app's AdMob app IDs.
+if (existsSync(join(out, 'app-ads.txt'))) {
+  const records = read('app-ads.txt')
+    .split('\n')
+    .map((line) => line.replace(/#.*/, '').trim())
+    .filter(Boolean);
+  const google = /^google\.com, pub-\d{16}, DIRECT, f08c47fec0942fa0$/;
+  if (records.length !== 1 || !google.test(records[0])) {
+    fail(`app-ads.txt: expected one AdMob line, got ${JSON.stringify(records)}`);
+  }
+}
+
+// The site itself has no ads, cookies or visitor analytics (privacy policy bölüm 6), even
+// though the app shows ads. Every generated text file is searched, not only the pages.
+const textFiles = (dir = out) =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) return textFiles(path);
+    return /\.(html|css|js|mjs|json|txt|xml|svg)$/.test(name) ? [path.slice(out.length + 1)] : [];
+  });
+const tracking = [
+  /adsbygoogle/i,
+  /googlesyndication/i,
+  /doubleclick/i,
+  /googletagmanager/i,
+  /google-analytics/i,
+  /\bgtag\(/,
+  /document\.cookie/,
+  /<iframe\b/i,
+];
+for (const file of textFiles()) {
+  const content = read(file);
+  for (const pattern of tracking) {
+    if (pattern.test(content)) fail(`${file}: ad, cookie or analytics marker ${pattern}`);
+  }
 }
 
 // S13-02 bölüm 4 and S12-06: claims the landing copy must not make. Legal pages are

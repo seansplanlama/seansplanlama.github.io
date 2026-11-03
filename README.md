@@ -36,6 +36,7 @@ npm run format:check # Prettier (düzeltme: npm run format)
 | `app/error.vue` | 404 sayfası. GitHub Pages bilinmeyen adreslerde `404.html`'i gösterir |
 | `app/assets/css/main.css` | Uygulamanın renk token'ları (S2-02 1.2, açık ve koyu tema) |
 | `public/gorseller/` | Ekran görüntüleri (aşağıda) |
+| `public/app-ads.txt` | AdMob yayıncı doğrulaması (aşağıda) |
 | `public/paylasim.png` | Paylaşım görseli, 1200 × 630 (S12-05, `docs/design/magaza/paylasim-1200x630.png`) |
 | `public/favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | İşaret (`docs/design/magaza/ikon/isaret.svg`, `ios-acik.png`) |
 | `scripts/check-site.mjs` | Üretilen siteyi kararlara göre denetler, hata varsa yayını durdurur |
@@ -70,10 +71,24 @@ Her `npm run generate` sonunda çalışır:
 
 - Bütün sayfalar `lang="tr"`, başlıklı; betik yok, başka bir siteden yüklenen dosya yok; büyük harf dönüşümü yok (ı/İ).
 - Landing metninde taslak bölüm 4'ün yasakladığı ifadeler yok ("güvenli", "en iyi", "yakında", "Seans Pro", koşulsuz "Google Takvim'e yansır", uyarı dışında "şifreli" vb.), düz kesme işareti yok (’ kullanılır), köşeli parantezli yer tutucu yok.
+- Üretilen hiçbir dosyada reklam, çerez ya da analiz izi yok (`adsbygoogle`, `doubleclick`, `googletagmanager`, `document.cookie`, `<iframe>` vb.): site reklamsız kalır.
+- `app-ads.txt` kökte ve içinde yalnız tek bir AdMob satırı var.
 - K-5: `deviceTestPassed` `false` iken hatırlatma cümlesi ve takvim sorusu yok.
 - Bekleme listesi düğmesi yasal metinler onaylanmadan görünmez.
 - `phase: 'launched'` iken iki mağaza bağlantısı ve iki rozet dosyası var.
 - Yasal sayfalar: onaydan önce "Bu metin hazırlanıyor" ve `noindex`; onaydan sonra `app/legal/` altında dört dosya, içinde yer tutucu ya da karar işareti yok.
+
+## `app-ads.txt` (S12-26)
+
+AdMob, mağaza kaydındaki geliştirici sitesinin kökünde `app-ads.txt` arar ve yayıncıyı onunla doğrular; doğrulanmayan uygulamaya reklam tam sunulmaz (reklam karar notu RK-6). Dosya `public/app-ads.txt`, build'de sitenin köküne kopyalanır ve `https://seansplanlama.github.io/app-ads.txt` adresinden düz metin olarak açılır.
+
+```
+google.com, pub-9902700337568115, DIRECT, f08c47fec0942fa0
+```
+
+- Yayıncı kimliği ürün sahibinin AdMob hesabınınkidir; uygulamanın AdMob uygulama kimlikleri (`ca-app-pub-9902700337568115~…`, uygulama deposunda `.env` ve [docs/release.md](../docs/release.md) "Reklam") aynı kimlikle başlar. Son alan Google'ın sertifika kimliğidir, AdMob'un verdiği satırla aynı.
+- AdMob tarayıcısı geliştirici sitesinin adresindeki ana makine adını kullanır, önce `https://<ad>/app-ads.txt`'e bakar ve bir alt alan düzeyi yukarı çıkabilir ([AdMob: Set up an app-ads.txt file](https://support.google.com/admob/answer/9363762), 3 Kasım 2026'da okundu). Yol önemsizdir, ana makine adı sayılır; bu yüzden iki mağaza kaydındaki geliştirici sitesi adresi (Google Play'de Website, App Store'da Marketing URL ve Support URL) `seansplanlama.github.io` alan adında olur (S12-09). Adres değişirse dosya yeni adresin kökünde de durmalı.
+- Doğrulama yayından sonra AdMob'da uygulama mağaza kaydına bağlanınca başlar (S13-13); o zamana kadar AdMob'da "app-ads.txt bulunamadı" görünmesi beklenir. Satır bir reklam ağı daha eklenmedikçe değişmez.
 
 ## Ekran görüntüleri
 
