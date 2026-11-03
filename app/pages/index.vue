@@ -46,7 +46,7 @@ const benefits: { icon: IconName; title: string; body: string }[] = [
   {
     icon: 'phonePortraitOutline',
     title: 'İki platformda, Türkçe, sade',
-    body: 'iPhone’da da Android’de de aynı uygulama. Ekranlar Türkçe, tutarlar Türk lirası, hafta pazartesi başlar. İndirdiğin gün, hesap açmadan kullanmaya başlarsın. Ücretsiz ve reklamsız.',
+    body: 'iPhone’da da Android’de de aynı uygulama. Ekranlar Türkçe, tutarlar Türk lirası, hafta pazartesi başlar. İndirdiğin gün, hesap açmadan kullanmaya başlarsın. Ücretsiz.',
   },
 ];
 
@@ -128,16 +128,29 @@ const steps = [
 ];
 
 // 1.6. Same facts as the privacy policy draft; aligned again after S13-07.
+// The ad fact comes with the ad build (K-7) and follows the policy's "Kısaca" ad item.
+const adFact =
+  'Uygulamada Google’ın sunduğu kişiselleştirilmemiş reklamlar gösterilir. Öğrenci ve veli adları, telefonlar, notlar ve ücretler reklam isteğine girmez. Reklam gösterebilmek için uygulamadaki Google reklam bileşeni telefonun IP adresini, uygulamaya ya da geliştiriciye özgü bir cihaz kimliğini, reklamlarla etkileşimleri ve teknik bilgileri Google’a gönderir. Uygulama reklam kimliğini okumaz.';
+
 const dataFacts = [
   'Telefon değiştirirken yedeğini tek bir dosya olarak alırsın. Dosyayı nereye kaydedeceğini (Google Drive, iCloud Drive, WhatsApp) sen seçersin, yeni telefonda bu dosyayla geri yüklersin. Yedek dosyası şifreli değildir; onu yalnız sana ait bir yere kaydet.',
   'Uygulamayı silersen bilgilerin de silinir. Bizde bir kopyası olmadığı için geri getiremeyiz. Silmeden önce yedek al.',
   'Dersleri telefon takvimine yazmayı açarsan ve seçtiğin takvim Google ya da iCloud hesabındaysa, ders adları ve saatleri o hesaba da gider. Takvim etkinliğine ücret ve borç yazılmaz.',
   'Uygulama çökerse hatayı düzeltebilmek için teknik bir hata raporu gönderilir. Bu rapora öğrenci, veli ve ödeme bilgisi girmemesi için önlem alındı.',
+  ...(site.appShowsAds ? [adFact] : []),
   'İstersen Seans’ı Face ID, parmak izi ya da telefon şifrenle kilitleyebilirsin.',
 ];
 
 // 1.7. Question 3 and 7 change on launch day; question 6 waits for S13-08 (K-5).
+// Question 2 has an ad-free closed test version until the ad build is out (K-7).
 type Faq = { question: string; answer: string; link?: { href: string; label: string } };
+
+const adsFaq: Faq = {
+  question: 'Reklam var mı?',
+  answer: site.appShowsAds
+    ? 'Evet. Seans ücretsiz ve uygulamada reklam gösterilir: Bugün ekranında ve kişi listesinde birer reklam kartı, Aylık özet’in ve Ayarlar’ın en altında birer reklam alanı. Reklamlar kişiselleştirilmez, yani geçmişteki davranışına göre seçilmez; kayıtlarındaki ad, telefon, not ve ücret bilgileri reklam için kullanılmaz. 5 kişiden ya da 5 ders programından sonra yenisini eklemek için kısa bir reklam izlemen istenebilir, reklamdan sonra 5 dakika boyunca istediğin kadar eklersin. Ders işaretlemek, ödeme kaydetmek ya da yedek almak için reklam izlemen gerekmez.'
+    : 'Mağazaya çıkacak sürümde var. Seans ücretsiz ve kişiselleştirilmemiş reklam gösterecek; kayıtlarındaki ad, telefon, not ve ücret bilgileri reklam için kullanılmayacak. Kapalı testin ilk sürümünde reklam gösterilmiyor, reklamlar test sürerken gelecek.',
+};
 
 const platformFaq: Faq = launched
   ? {
@@ -186,10 +199,7 @@ const faqs: Faq[] = [
     answer:
       'Hayır. Seans’ı indirmek ve kullanmak ücretsiz. Üye olman ya da kart bilgisi girmen gerekmez.',
   },
-  {
-    question: 'Reklam var mı?',
-    answer: 'Hayır. Seans reklam göstermez, ileride de göstermeyecek.',
-  },
+  adsFaq,
   platformFaq,
   {
     question: 'Uygulamayı silersem ne olur?',
@@ -226,13 +236,13 @@ const faqs: Faq[] = [
         </div>
         <div v-else-if="launched" class="mt-8">
           <StoreBadges />
-          <p class="mt-3 text-sm text-muted">Ücretsiz, reklamsız, hesap gerektirmez.</p>
+          <p class="mt-3 text-sm text-muted">Ücretsiz, hesap gerektirmez.</p>
         </div>
         <p
           v-else
           class="mt-8 inline-flex rounded-full bg-accent-soft px-4 py-2 font-semibold text-ink"
         >
-          Ücretsiz, reklamsız, hesap gerektirmez.
+          Ücretsiz, hesap gerektirmez.
         </p>
       </div>
       <div class="relative mx-auto flex w-full max-w-md justify-center lg:max-w-none">
@@ -406,7 +416,7 @@ const faqs: Faq[] = [
       <div class="rounded-3xl bg-accent px-6 py-12 text-center text-on-accent sm:px-12">
         <template v-if="launched">
           <h2 class="text-3xl font-bold sm:text-4xl">Hesabını tutar, hesap açtırmaz.</h2>
-          <p class="mt-4 text-lg">Ücretsiz, reklamsız, hesap gerektirmez.</p>
+          <p class="mt-4 text-lg">Ücretsiz, hesap gerektirmez.</p>
           <div class="mt-8 flex justify-center">
             <StoreBadges />
           </div>

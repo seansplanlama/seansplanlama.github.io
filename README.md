@@ -5,6 +5,7 @@ Tek sayfalık tanıtım sitesi ve yasal metin sayfaları. Yayın adresi `https:/
 - **Yığın:** Nuxt 4 ve Tailwind CSS 4. Bütün sayfalar build sırasında HTML'e çevrilir (`nuxt generate`), sunucu yok.
 - **JavaScript yok.** `features.noScripts` sayfalardan Nuxt'ın betiklerini çıkarır. SSS `<details>` ile açılır. Yalnız tarayıcıya aynı sitedeki sayfaları önceden yükleme ipucu veren `speculationrules` bloğu kalır, o çalışan bir betik değildir.
 - **Üçüncü taraf yok.** Çerez, ziyaretçi analizi, gömülü form ya da başka bir siteden yüklenen yazı tipi, betik veya görsel yok. Nunito (`@fontsource-variable/nunito`) ve Ionicons build'e girer. Gizlilik politikası taslağı bölüm 6'daki "Sitemizde çerez, reklam ya da ziyaretçi analizi aracı kullanılmaz" cümlesi bu yüzden doğru; `scripts/check-site.mjs` bunu her build'de denetler.
+- **Uygulama reklamlı, site reklamsız** (S12-26, 3 Kasım 2026). Uygulama kişiselleştirilmemiş reklam gösterir (S12-16); sitenin kendisinde reklam, çerez ve analiz yok. "Reklamsız" sayfada uygulama için geçmez (S13-02 1.11), denetim bunu da yakalar. Sitenin kökündeki `app-ads.txt` AdMob'un yayıncıyı doğruladığı düz metin dosyasıdır, sayfaya bir şey eklemez.
 - **Barındırma kaydı.** GitHub, Pages sitesini ziyaret edenin IP adresini güvenlik için kaydediyor, ziyaretçi GitHub'a giriş yapmış olsun olmasın ([GitHub Docs: What is GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), "Data collection", 31 Ekim 2026'da okundu). Gizlilik politikasındaki `[BARINDIRMA HİZMETİ]` bu yüzden GitHub, Inc. (ABD) olur.
 
 ## Neden bu klasörde
@@ -52,6 +53,7 @@ Boş (`null`) bir değer sayfada o parçanın hiç görünmemesi demektir; ziyar
 | `waitlistUrl` | `null` | Tally formu kurulup S13-07 onayı gelince (ürün sahibi) | Üst alandaki "Bekleme listesine yazıl" düğmesi ve kapanış bandı. `legalApproved` `false` iken build hata verir |
 | `legalApproved` | `false` | S13-07 onay günü, `app/legal/*.md` ile birlikte | Dört yasal sayfa "Bu metin hazırlanıyor" yerine onaylı metni gösterir, `noindex` kalkar |
 | `deviceTestPassed` | `false` | S13-08 iPhone'da geçince (K-5) | "Dersten önce hatırlatma bildirimi gelir." cümlesi ve "Derslerim telefonumun takviminde görünür mü?" sorusu aynı gün girer |
+| `appShowsAds` | `false` | Reklamlı build kapalı teste yüklendiği gün (reklam karar notu R11, mağaza beyanları 3.5 Aşama B), gizlilik politikasının reklamlı haliyle aynı gün. Yayından önce mutlaka `true` | SSS 2 reklamsız aşama halinden ("Mağazaya çıkacak sürümde var.") reklamlı cevaba ("Evet. ...") geçer, "Bilgilerin telefonunda"ya reklam maddesi girer (S13-02 1.10, K-7). Kapalı test reklamlı build'le başlarsa baştan `true` |
 | `testFlightUrl` | `null` | Apple hesabı ve ilk TestFlight incelemesinden sonra (K-4 b) | SSS'deki iPhone cevabı TestFlight bağlantısını verir |
 | `supportEmail` | `null` | S13-01 | Alt bilgide "Destek:" satırı |
 | `developerName` | `null` | Mağazadaki satıcı adı | Alt bilgide "Seans · ad" |
@@ -61,7 +63,7 @@ Boş (`null`) bir değer sayfada o parçanın hiç görünmemesi demektir; ziyar
 
 Sayfanın üç hali:
 
-1. **Şimdi (yayından önce, form kapalı).** Düğme ve kapanış bandı yok (taslak 2.2, "Form kapalıyken"). Üst alanda düğmenin yerinde "Ücretsiz, reklamsız, hesap gerektirmez." satırı durur; bu satır taslakta meta açıklamada ve yayından sonraki üst alanda geçer.
+1. **Şimdi (yayından önce, form kapalı).** Düğme ve kapanış bandı yok (taslak 2.2, "Form kapalıyken"). Üst alanda düğmenin yerinde "Ücretsiz, hesap gerektirmez." satırı durur; bu satır taslakta meta açıklamada ve yayından sonraki üst alanda geçer.
 2. **Form açık (S13-07'den sonra).** Düğme formu yeni sekmede açar, form siteye gömülmez (taslak 1.11).
 3. **Yayından sonra.** Rozetler gelir. Resmi, Türkçe ve değiştirilmemiş rozetler yayın günü Apple'ın ve Google'ın rozet sayfalarından indirilip `public/rozetler/app-store.svg` ve `public/rozetler/google-play.png` adıyla konur; Google'ın atıf satırı da o gün eklenir (taslak 1.9). Dosyalar yoksa build hata verir.
 
@@ -70,9 +72,10 @@ Sayfanın üç hali:
 Her `npm run generate` sonunda çalışır:
 
 - Bütün sayfalar `lang="tr"`, başlıklı; betik yok, başka bir siteden yüklenen dosya yok; büyük harf dönüşümü yok (ı/İ).
-- Landing metninde taslak bölüm 4'ün yasakladığı ifadeler yok ("güvenli", "en iyi", "yakında", "Seans Pro", koşulsuz "Google Takvim'e yansır", uyarı dışında "şifreli" vb.), düz kesme işareti yok (’ kullanılır), köşeli parantezli yer tutucu yok.
+- Landing metninde taslak bölüm 4'ün yasakladığı ifadeler yok ("güvenli", "en iyi", "yakında", "Seans Pro", koşulsuz "Google Takvim'e yansır", uyarı dışında "şifreli", "reklamsız", "reklam yok", "veri paylaşılmaz", "anonim" vb.), düz kesme işareti yok (’ kullanılır), köşeli parantezli yer tutucu yok.
 - Üretilen hiçbir dosyada reklam, çerez ya da analiz izi yok (`adsbygoogle`, `doubleclick`, `googletagmanager`, `document.cookie`, `<iframe>` vb.): site reklamsız kalır.
 - `app-ads.txt` kökte ve içinde yalnız tek bir AdMob satırı var.
+- K-7: `appShowsAds` `false` iken SSS 2 reklamsız aşama halinde ve reklam maddesi yok; `true` iken ikisi de reklamlı halinde. `phase: 'launched'` iken `appShowsAds` `true`.
 - K-5: `deviceTestPassed` `false` iken hatırlatma cümlesi ve takvim sorusu yok.
 - Bekleme listesi düğmesi yasal metinler onaylanmadan görünmez.
 - `phase: 'launched'` iken iki mağaza bağlantısı ve iki rozet dosyası var.

@@ -20,6 +20,12 @@ export interface SiteConfig {
   deviceTestPassed: boolean;
   /** The lawyer approved the legal texts (S13-07); app/legal/*.md hold the approved text. */
   legalApproved: boolean;
+  /**
+   * The app build with ads is out: in the closed test (stage B, ad decision R11) or in the
+   * stores. Until then FAQ 2 says ads come later and the data section has no ad fact (S13-02
+   * 1.10, K-7). Flipped the same day as the privacy policy's ad version (policy N13).
+   */
+  appShowsAds: boolean;
   /** Support and KVKK address, opened in S13-01. */
   supportEmail: string | null;
   /** Seller name shown in the stores (privacy policy N2). */
@@ -37,6 +43,7 @@ export const site: SiteConfig = {
   testFlightUrl: null,
   deviceTestPassed: false,
   legalApproved: false,
+  appShowsAds: false,
   supportEmail: null,
   developerName: null,
   instagramUrl: null,
@@ -46,7 +53,7 @@ export const site: SiteConfig = {
 export const meta = {
   title: 'Seans: Ders ve Danışan Takibi',
   description:
-    'Öğrenci, danışan, sporcu ve müşteri takibi: haftalık program, ödeme ve alacak tek yerde. Ücretsiz, reklamsız, hesap gerektirmez.',
+    'Öğrenci, danışan, sporcu ve müşteri takibi: haftalık program, ödeme ve alacak tek yerde. Ücretsiz, hesap gerektirmez.',
   image: '/paylasim.png',
 };
 

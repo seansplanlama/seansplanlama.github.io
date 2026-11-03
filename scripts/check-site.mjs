@@ -100,6 +100,14 @@ const forbidden = [
   /şifreli(?! değildir)/i,
   /haber ver/i,
   /yalnız telefonunda/i,
+  // S12-25: the app shows ads, so neither "ad-free" nor a data claim the ad SDK breaks.
+  /reklamsız/i,
+  /reklam yok/i,
+  /rahatsız etmeyen/i,
+  /paylaşılmaz/i,
+  /hiçbir (?:şey|bilgi) gitmez/i,
+  /anonim/i,
+  /izlemeyiz/i,
 ];
 
 for (const file of htmlFiles()) {
@@ -138,6 +146,22 @@ const index = visibleText(read('index.html'));
 if (!site.deviceTestPassed) {
   if (/hatırlatma bildirimi/i.test(index)) fail('index: reminder sentence before S13-08');
   if (/takviminde görünür mü/i.test(index)) fail('index: calendar question before S13-08');
+}
+
+// K-7: FAQ 2 and the ad fact in the data section follow the app build in the closed test.
+if (site.appShowsAds) {
+  if (!index.includes('Evet. Seans ücretsiz ve uygulamada reklam gösterilir')) {
+    fail('index: the ad build is out but FAQ 2 is not the ad version');
+  }
+  if (!index.includes('reklam isteğine girmez')) fail('index: ad fact missing in 1.6');
+} else {
+  if (!index.includes('Mağazaya çıkacak sürümde var')) {
+    fail('index: FAQ 2 is not the ad-free closed test version');
+  }
+  if (index.includes('reklam isteğine girmez')) fail('index: ad fact before the ad build');
+}
+if (site.phase === 'launched' && !site.appShowsAds) {
+  fail('site.ts: launched but appShowsAds is false (the store build shows ads)');
 }
 
 // The waitlist form opens only after the lawyer's approval (S13-07).
