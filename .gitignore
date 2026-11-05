@@ -7,3 +7,6 @@ dist
 
 # design-taste-frontend working files
 .taste-skill/
+
+# GSAP, copied from node_modules by scripts/vendor.mjs
+public/vendor/

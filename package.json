@@ -6,8 +6,8 @@
     "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "nuxt dev",
-    "generate": "nuxt generate && node scripts/check-site.mjs",
+    "dev": "node scripts/vendor.mjs && nuxt dev",
+    "generate": "node scripts/vendor.mjs && nuxt generate && node scripts/check-site.mjs",
     "preview": "python3 -m http.server 4173 -d .output/public",
     "check": "node scripts/check-site.mjs",
     "typecheck": "nuxt typecheck",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@fontsource-variable/nunito": "5.3.0",
+    "gsap": "3.15.0",
     "marked": "18.1.1",
     "nuxt": "4.6.3",
     "vue": "3.5.44",
