@@ -1,6 +1,6 @@
 # Seans tanıtım sitesi (S12-08)
 
-Tek sayfalık tanıtım sitesi ve yasal metin sayfaları. Yayın adresi `https://seansplanlama.github.io` (S13-02 K-3 b, 30 Ekim 2026). Görev: [#115](https://github.com/MrKacmaz/ozel-ders-mobil/issues/115). Metin kaynağı: [S13-02 landing taslağı](../docs/marketing/s13-02-landing-taslagi.md).
+Tek sayfalık tanıtım sitesi ve yasal metin sayfaları. Yayın adresi `https://seansplanlama.github.io` (S13-02 K-3 b, 30 Ekim 2026). Görev: [#115](https://github.com/MrKacmaz/ozel-ders-mobil/issues/115). Metin kaynağı: [S13-02 landing taslağı](https://github.com/MrKacmaz/ozel-ders-mobil/blob/master/docs/marketing/s13-02-landing-taslagi.md).
 
 - **Yığın:** Nuxt 4 ve Tailwind CSS 4. Bütün sayfalar build sırasında HTML'e çevrilir (`nuxt generate`), sunucu yok.
 - **JavaScript yok.** `features.noScripts` sayfalardan Nuxt'ın betiklerini çıkarır. SSS `<details>` ile açılır. Yalnız tarayıcıya aynı sitedeki sayfaları önceden yükleme ipucu veren `speculationrules` bloğu kalır, o çalışan bir betik değildir.
@@ -8,16 +8,22 @@ Tek sayfalık tanıtım sitesi ve yasal metin sayfaları. Yayın adresi `https:/
 - **Uygulama reklamlı, site reklamsız** (S12-26, 3 Kasım 2026). Uygulama kişiselleştirilmemiş reklam gösterir (S12-16); sitenin kendisinde reklam, çerez ve analiz yok. "Reklamsız" sayfada uygulama için geçmez (S13-02 1.11), denetim bunu da yakalar. Sitenin kökündeki `app-ads.txt` AdMob'un yayıncıyı doğruladığı düz metin dosyasıdır, sayfaya bir şey eklemez.
 - **Barındırma kaydı.** GitHub, Pages sitesini ziyaret edenin IP adresini güvenlik için kaydediyor, ziyaretçi GitHub'a giriş yapmış olsun olmasın ([GitHub Docs: What is GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), "Data collection", 31 Ekim 2026'da okundu). Gizlilik politikasındaki `[BARINDIRMA HİZMETİ]` bu yüzden GitHub, Inc. (ABD) olur.
 
-## Neden bu klasörde
+## Neden ayrı depo
 
-GitHub'ın ücretsiz planında Pages yalnız public depoda çalışır ve organizasyon sitesinin deposu `<organizasyon>.github.io` adını taşımalıdır ([GitHub Docs](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site), 31 Ekim 2026'da okundu). Uygulama deposu açılmayacağı için site ayrı bir depoda yayınlanır: `seansplanlama/seansplanlama.github.io`. Organizasyonu ve depoyu ürün sahibi açar. O güne kadar kod burada durur; uygulamanın araçları (ESLint, Prettier, TypeScript, Jest) bu klasörü yok sayar.
+GitHub'ın ücretsiz planında Pages yalnız public depoda çalışır ve organizasyon sitesinin deposu `<organizasyon>.github.io` adını taşımalıdır ([GitHub Docs](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site), 31 Ekim 2026'da okundu). Uygulama deposu private kaldığı için site bu public depoda durur. Site 31 Ekim 2026'da uygulama deposunun `landing/` klasöründe kuruldu ve 5 Kasım 2026'da geçmişiyle buraya taşındı; taşırken commit'lerin yazar ve committer adresi GitHub'ın noreply adresine çevrildi. Depo public olduğu için yeni commit'ler de o adresle atılır:
+
+```bash
+git config user.name MrKacmaz
+git config user.email 57367737+MrKacmaz@users.noreply.github.com
+```
+
+Görevler, kararlar ve metin taslakları uygulama deposunda kalır (private); bu README'deki o depoya giden bağlantılar yalnız ürün sahibine açılır.
 
 ## Komutlar
 
 Node 24 gerekir (`.nvmrc`; Nuxt 4.6 Node 22.22.3 ya da 24.15 ve üstünü istiyor).
 
 ```bash
-cd landing
 npm install
 npm run dev          # geliştirme sunucusu, http://localhost:3000
 npm run generate     # .output/public altında statik site, ardından scripts/check-site.mjs
@@ -41,7 +47,7 @@ npm run format:check # Prettier (düzeltme: npm run format)
 | `public/paylasim.png` | Paylaşım görseli, 1200 × 630 (S12-05, `docs/design/magaza/paylasim-1200x630.png`) |
 | `public/favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | İşaret (`docs/design/magaza/ikon/isaret.svg`, `ios-acik.png`) |
 | `scripts/check-site.mjs` | Üretilen siteyi kararlara göre denetler, hata varsa yayını durdurur |
-| `.github/workflows/deploy.yml` | Yayın iş akışı. Burada çalışmaz, ayrı depoda çalışır |
+| `.github/workflows/deploy.yml` | Yayın iş akışı (`Yayın`): `main`'e her push'ta biçim, tip, build ve denetim; geçerse GitHub Pages'e yayın |
 
 ## `app/site.ts`: yer tutucular ve anahtarlar
 
@@ -89,7 +95,7 @@ AdMob, mağaza kaydındaki geliştirici sitesinin kökünde `app-ads.txt` arar v
 google.com, pub-9902700337568115, DIRECT, f08c47fec0942fa0
 ```
 
-- Yayıncı kimliği ürün sahibinin AdMob hesabınınkidir; uygulamanın AdMob uygulama kimlikleri (`ca-app-pub-9902700337568115~…`, uygulama deposunda `.env` ve [docs/release.md](../docs/release.md) "Reklam") aynı kimlikle başlar. Son alan Google'ın sertifika kimliğidir, AdMob'un verdiği satırla aynı.
+- Yayıncı kimliği ürün sahibinin AdMob hesabınınkidir; uygulamanın AdMob uygulama kimlikleri (`ca-app-pub-9902700337568115~…`, uygulama deposunda `.env` ve [docs/release.md](https://github.com/MrKacmaz/ozel-ders-mobil/blob/master/docs/release.md) "Reklam") aynı kimlikle başlar. Son alan Google'ın sertifika kimliğidir, AdMob'un verdiği satırla aynı.
 - AdMob tarayıcısı geliştirici sitesinin adresindeki ana makine adını kullanır, önce `https://<ad>/app-ads.txt`'e bakar ve bir alt alan düzeyi yukarı çıkabilir ([AdMob: Set up an app-ads.txt file](https://support.google.com/admob/answer/9363762), 3 Kasım 2026'da okundu). Yol önemsizdir, ana makine adı sayılır; bu yüzden iki mağaza kaydındaki geliştirici sitesi adresi (Google Play'de Website, App Store'da Marketing URL ve Support URL) `seansplanlama.github.io` alan adında olur (S12-09). Adres değişirse dosya yeni adresin kökünde de durmalı.
 - Doğrulama yayından sonra AdMob'da uygulama mağaza kaydına bağlanınca başlar (S13-13); o zamana kadar AdMob'da "app-ads.txt bulunamadı" görünmesi beklenir. Satır bir reklam ağı daha eklenmedikçe değişmez.
 
@@ -98,7 +104,7 @@ google.com, pub-9902700337568115, DIRECT, f08c47fec0942fa0
 `public/gorseller/` altındaki dosyalar S12-05'in ham ekran görüntülerinden (`builds/magaza/ham/`, uydurma veri; depoya girmez) ImageMagick ile WebP'ye çevrildi. Görüntü yeniden çizilmedi, yalnız ölçeklendi ve meslek kartlarında kırpıldı:
 
 ```bash
-H=../builds/magaza/ham
+H=<uygulama deposu>/builds/magaza/ham
 magick $H/ios/ogretmen-01-bugun-acik.png -resize 640x -quality 82 public/gorseller/bugun-iphone.webp
 magick $H/android/ogretmen-02-takvim-acik.png -resize 560x -quality 82 public/gorseller/takvim-android.webp
 # meslek kartları: ogretmen, antrenor, danisan, musteri -> egitim, spor, danismanlik, evcil-ev
@@ -109,20 +115,10 @@ magick $H/ios/ogretmen-06-meslek-acik.png -resize 480x -quality 82 public/gorsel
 
 Uygulamanın ekranı değişirse görüntüler aynı komutlarla yenilenir.
 
-## Ayrı depoya taşıma (ürün sahibi)
+## Yayın
 
-1. GitHub'da ücretsiz `seansplanlama` organizasyonu açılır (ad 26 Ekim 2026'da boştu, açarken doğrulanır).
-2. Organizasyonda **public** `seansplanlama.github.io` deposu boş olarak açılır.
-3. Bu klasör geçmişiyle birlikte yeni deponun köküne taşınır. Uygulama deposunun kökünde:
-
-   ```bash
-   git subtree split --prefix=landing -b landing-export
-   git push https://github.com/seansplanlama/seansplanlama.github.io.git landing-export:main
-   git branch -D landing-export
-   ```
-
-4. Yeni depoda Settings > Pages > Build and deployment > Source: **GitHub Actions**.
-5. İş akışı (`Yayın`) ilk push'ta çalışır; bitince site `https://seansplanlama.github.io` adresinde açılır.
-6. Uygulamadaki `LANDING_URL` (`src/services/support/index.ts`) 31 Ekim 2026'dan beri bu adres, gizlilik politikası taslağı 0.5 da; mağaza konsolları ve sosyal medya profilleri de bu adresi kullanır. Uygulama deposundaki `landing/` klasörü bundan sonra kaldırılabilir; `docs/architecture.md` yeni depoyu gösterir.
+- 5 Kasım 2026'dan beri yayında: `seansplanlama` organizasyonu ürün sahibinin GitHub hesabına bağlı ücretsiz organizasyon; Settings > Pages > Source **GitHub Actions**.
+- `main`'e her push `Yayın` iş akışını çalıştırır; `scripts/check-site.mjs` ya da biçim veya tip kontrolü düşerse yayın olmaz ve eski site kalır. Elle yeniden yayın: Actions > Yayın > Run workflow.
+- Uygulamadaki `LANDING_URL` (uygulama deposunda `src/services/support/index.ts`) 31 Ekim 2026'dan beri bu adres; gizlilik politikası taslağı 0.5, mağaza konsolları ve sosyal medya profilleri de bu adresi kullanır. Sayfa yolları (`/gizlilik`, `/kvkk`, `/kullanim-sartlari`) uygulamada sabit, değişmez. GitHub Pages yolu sonuna `/` ekleyerek yönlendirir (`/gizlilik` → `/gizlilik/`).
 
 Site yayına girdikten sonra da duyurulmaz: duyuru, form ve yasal metinler S13-07 onayıyla aynı gün açılır (taslak 5.1, adım 7).

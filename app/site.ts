@@ -1,7 +1,7 @@
 /**
  * Every value that changes before the site goes public lives here (S13-02 5.2).
  * null means "not there yet": the page leaves out the part that needs it, so a
- * placeholder never reaches a visitor. landing/README.md lists who fills what and when.
+ * placeholder never reaches a visitor. README.md lists who fills what and when.
  */
 export type Phase = 'prelaunch' | 'launched';
 
