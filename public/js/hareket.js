@@ -181,8 +181,8 @@
       var next = cards[index + 1];
       if (!next) return;
       gsap.to(card, {
-        scale: 0.94,
-        filter: 'brightness(0.62)',
+        scale: 0.95,
+        filter: 'brightness(0.8)',
         ease: 'none',
         scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 20%', scrub: true },
       });
