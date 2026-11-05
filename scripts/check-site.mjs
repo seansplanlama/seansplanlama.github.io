@@ -13,6 +13,14 @@ const errors = [];
 const fail = (message) => errors.push(message);
 
 const read = (path) => readFileSync(join(out, path), 'utf8');
+
+// Scripts a page may load: GSAP from public/vendor/gsap (scripts/vendor.mjs) and the motion.
+const allowedScripts = new Set([
+  '/vendor/gsap/gsap.min.js',
+  '/vendor/gsap/ScrollTrigger.min.js',
+  '/vendor/gsap/SplitText.min.js',
+  '/js/hareket.js',
+]);
 const pageFile = (path) => (path === '/' ? 'index.html' : `${path.slice(1)}/index.html`);
 
 const htmlFiles = (dir = out) =>
@@ -39,8 +47,14 @@ if (!existsSync(out)) {
   process.exit(1);
 }
 
-// Files GitHub Pages and the stores need.
-for (const file of ['.nojekyll', 'favicon.svg', 'paylasim.png', 'app-ads.txt']) {
+// Files GitHub Pages and the stores need, and the scripts the pages load.
+for (const file of [
+  '.nojekyll',
+  'favicon.svg',
+  'paylasim.png',
+  'app-ads.txt',
+  ...[...allowedScripts].map((src) => src.slice(1)),
+]) {
   if (!existsSync(join(out, file))) fail(`Missing ${file}`);
 }
 for (const path of ['/', ...legalPages.map((page) => page.path)]) {
@@ -86,6 +100,14 @@ for (const file of textFiles()) {
   }
 }
 
+// The page's own motion script works on the page only.
+if (existsSync(join(out, 'js/hareket.js'))) {
+  const motion = read('js/hareket.js');
+  if (/fetch\(|XMLHttpRequest|sendBeacon|WebSocket|localStorage|cookie|https?:\/\//.test(motion)) {
+    fail('js/hareket.js: the motion script reaches beyond the page');
+  }
+}
+
 // S13-02 bölüm 4 and S12-06: claims the landing copy must not make. Legal pages are
 // excluded: their approved text may need these words ("güvenlik", "şifreli aktarım").
 const legalFiles = new Set(legalPages.map((page) => pageFile(page.path)));
@@ -117,19 +139,25 @@ for (const file of htmlFiles()) {
   if (!/<html\s+lang="tr"/.test(html)) fail(`${file}: html lang is not "tr"`);
   if (!/<title>[^<]+<\/title>/.test(html)) fail(`${file}: no <title>`);
 
-  // No JavaScript beyond the inline theme memory, and nothing loaded from another host
-  // (privacy policy bölüm 6). Speculation rules are allowed: a same-site prefetch hint.
-  // The theme script may only touch localStorage and the theme radios: no network, no cookie.
+  // Scripts: the two small inline ones (theme memory, motion switch) and the motion files
+  // served from this site (GSAP and public/js/hareket.js), nothing else and nothing from
+  // another host (privacy policy bölüm 6). Speculation rules are a same-site prefetch hint.
+  // The inline scripts may not reach the network or a cookie and stay small.
   for (const [whole, tag, body] of html.matchAll(/(<script\b[^>]*>)([\s\S]*?)<\/script>/gi)) {
     if (tag.includes('type="speculationrules"')) continue;
-    if (tag !== '<script id="tema">') {
+    const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+    if (src) {
+      if (!allowedScripts.has(src)) fail(`${file}: loads script ${src}`);
+      continue;
+    }
+    if (tag !== '<script id="tema">' && tag !== '<script id="hareket">') {
       fail(`${file}: contains ${tag}`);
       continue;
     }
     if (/fetch|XMLHttpRequest|sendBeacon|WebSocket|cookie|https?:|\/\//i.test(body)) {
-      fail(`${file}: the theme script reaches beyond localStorage`);
+      fail(`${file}: the inline script ${tag} reaches beyond the page`);
     }
-    if (whole.length > 900) fail(`${file}: the theme script grew (${whole.length} chars)`);
+    if (whole.length > 900) fail(`${file}: the inline script ${tag} grew (${whole.length} chars)`);
   }
   for (const [, url] of html.matchAll(
     /<(?:link|img|source|iframe)\b[^>]*?(?:href|src)="([^"]+)"/g,

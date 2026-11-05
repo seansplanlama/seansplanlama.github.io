@@ -281,12 +281,12 @@ const faqs: Faq[] = [
         </p>
       </div>
 
-      <div class="hero-stage anim-drift">
-        <span class="hb hb-blue anim-block" style="--d: 0ms" aria-hidden="true" />
-        <span class="hb hb-teal anim-block" style="--d: 90ms" aria-hidden="true" />
-        <span class="hb hb-purple anim-block" style="--d: 180ms" aria-hidden="true" />
-        <span class="hb hb-core anim-block" style="--d: 240ms" aria-hidden="true" />
-        <div class="hero-shot anim-shutter">
+      <div class="hero-stage">
+        <span class="hb hb-blue" aria-hidden="true" />
+        <span class="hb hb-teal" aria-hidden="true" />
+        <span class="hb hb-purple" aria-hidden="true" />
+        <span class="hb hb-core" aria-hidden="true" />
+        <div class="hero-shot">
           <img
             src="/gorseller/bugun-iphone.webp"
             alt="iPhone’da Seans’ın Bugün ekranı: toplam alacak 12.700 ₺, işaretlenmeyi bekleyen bir ders ve günün iki dersi."
@@ -295,18 +295,20 @@ const faqs: Faq[] = [
             fetchpriority="high"
           />
         </div>
-        <span class="hb-dot anim-block" style="--d: 420ms" aria-hidden="true" />
+        <span class="hb-dot" aria-hidden="true" />
       </div>
     </section>
 
     <!-- 1.3 Fayda blokları -->
     <section class="wrap features" aria-labelledby="neler-yapar">
       <div class="features-head">
-        <h2 id="neler-yapar" class="t-h2 rise">Seans neler yapar</h2>
-        <p class="rise-2 mt-6">
-          Seans ödeme tahsil etmez, fatura kesmez. Veli, öğrenci ya da danışan için ayrı bir
-          uygulaması yoktur. Birebir çalışma içindir; grup dersi ve grup seansı yoktur.
-        </p>
+        <div class="features-head-inner">
+          <h2 id="neler-yapar" class="t-h2 rise">Seans neler yapar</h2>
+          <p class="rise-2 mt-6">
+            Seans ödeme tahsil etmez, fatura kesmez. Veli, öğrenci ya da danışan için ayrı bir
+            uygulaması yoktur. Birebir çalışma içindir; grup dersi ve grup seansı yoktur.
+          </p>
+        </div>
       </div>
       <ul class="tiles">
         <li
@@ -340,7 +342,7 @@ const faqs: Faq[] = [
           </p>
         </div>
 
-        <fieldset class="meslek-switch rise-2" data-ui>
+        <fieldset class="meslek-switch" data-ui>
           <legend class="sr-only">Meslek grubu</legend>
           <label v-for="(group, index) in professionGroups" :key="group.key">
             <input
@@ -392,10 +394,18 @@ const faqs: Faq[] = [
     <section class="wrap how" aria-labelledby="nasil-calisir">
       <h2 id="nasil-calisir" class="t-h2 rise">Nasıl çalışır</h2>
       <ol class="steps">
-        <li v-for="(step, index) in steps" :key="step.title" class="step" :data-step="index">
-          <h3 class="t-h3 rise">{{ step.title }}</h3>
-          <p class="rise-2 mt-3 max-w-[36ch]">{{ step.body }}</p>
-          <div class="step-shot rise-3">
+        <li
+          v-for="(step, index) in steps"
+          :key="step.title"
+          class="step"
+          :data-step="index"
+          :style="{ '--i': index }"
+        >
+          <div class="step-text">
+            <h3 class="t-h2">{{ step.title }}</h3>
+            <p class="t-lead mt-5 max-w-[34ch]">{{ step.body }}</p>
+          </div>
+          <div class="step-shot">
             <img :src="step.image" :alt="step.imageAlt" width="480" height="1043" loading="lazy" />
           </div>
         </li>
@@ -407,7 +417,7 @@ const faqs: Faq[] = [
       <div class="about-panel">
         <div class="about-left">
           <h2 id="bilgilerin" class="t-h2 rise">Bilgilerin telefonunda</h2>
-          <p class="about-statement rise-2">
+          <p class="about-statement">
             Seans’ta hesap, üyelik ya da şifre yok. Öğrencilerin, programın ve ödemelerin
             telefonundaki uygulamada saklanır. Seans’ın bu bilgileri tuttuğu bir sunucu yok;
             bilgilerin bize gelmez, biz göremeyiz.
@@ -670,15 +680,21 @@ const faqs: Faq[] = [
 
 .tile-stage img {
   position: absolute;
+  right: 0;
   bottom: 0;
-  left: 50%;
+  left: 0;
   width: 84%;
   height: auto;
   max-height: 90%;
+  margin-inline: auto;
   object-fit: cover;
   object-position: top;
-  transform: translateX(-50%);
   border-radius: calc(var(--r) * 0.8) calc(var(--r) * 0.8) 0 0;
+  transition: scale 700ms var(--ease);
+}
+
+.tile:hover .tile-stage img {
+  scale: 1.04;
 }
 
 .tile-wide .tile-stage img {
@@ -943,7 +959,7 @@ const faqs: Faq[] = [
   }
 }
 
-/* ---------- 1.5 How it works: one hue, dark to light ---------- */
+/* ---------- 1.5 How it works: stacking cards, one hue from dark to light ---------- */
 .how {
   padding-top: clamp(96px, 14vw, 200px);
 }
@@ -951,18 +967,31 @@ const faqs: Faq[] = [
 .steps {
   display: grid;
   margin-top: 48px;
-  gap: 10px;
+  gap: 32px;
 }
 
+/*
+ * Sticky, so the cards stack on each other without script; GSAP adds the push-back. Each card
+ * stops a title's height below the one before, so the earlier steps stay readable as tabs.
+ */
 .step {
-  display: flex;
-  min-height: 520px;
-  flex-direction: column;
+  --tab: 60px;
+  position: sticky;
+  top: calc(80px + var(--i) * var(--tab));
+  display: grid;
+  min-height: min(70svh, 600px);
   overflow: hidden;
   border-radius: var(--r);
   background: var(--step-a);
-  padding: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px) 0;
+  padding: 14px clamp(20px, 4vw, 56px) 0;
   color: var(--on-step-a);
+  transform-origin: 50% 0%;
+}
+
+.step-text h3 {
+  min-height: calc(var(--tab) - 14px);
+  font-size: var(--t-h3);
+  line-height: calc(var(--tab) - 14px);
 }
 
 .step[data-step='1'] {
@@ -976,32 +1005,49 @@ const faqs: Faq[] = [
 }
 
 .step-shot {
-  margin-top: auto;
-  padding-top: 40px;
-  align-self: center;
-  width: min(72%, 300px);
+  margin-top: 40px;
+  align-self: end;
+  justify-self: center;
+  width: min(72%, 320px);
 }
 
 .step-shot img {
   display: block;
   width: 100%;
-  height: 360px;
+  height: clamp(260px, 40svh, 420px);
   object-fit: cover;
   object-position: top;
   border-radius: calc(var(--r) * 0.9) calc(var(--r) * 0.9) 0 0;
 }
 
 @media (min-width: 900px) {
-  .steps {
-    grid-template-columns: repeat(3, 1fr);
+  .step {
+    grid-template-columns: 1.1fr 1fr;
+    column-gap: 48px;
   }
 
   .step {
-    min-height: 640px;
+    --tab: 84px;
+    padding-top: 18px;
+  }
+
+  .step-text {
+    padding-bottom: clamp(28px, 4vw, 56px);
+  }
+
+  .step-text h3 {
+    min-height: calc(var(--tab) - 18px);
+    font-size: var(--t-h2);
+    line-height: calc(var(--tab) - 18px);
+  }
+
+  .step-shot {
+    margin-top: 0;
+    width: min(80%, 360px);
   }
 
   .step-shot img {
-    height: 400px;
+    height: min(56svh, 520px);
   }
 }
 

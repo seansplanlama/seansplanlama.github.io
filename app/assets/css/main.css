@@ -129,6 +129,10 @@
     scroll-padding-top: 24px;
   }
 
+  main {
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-ground font-sans text-ink antialiased;
     font-size: var(--t-body);
@@ -342,91 +346,21 @@
 }
 
 /*
- * Motion. Everything is CSS: the page has no script beyond the theme memory.
- * Entrances run on load (hero) or as a section scrolls in (scroll-driven animations,
- * where supported). Content is never hidden when an animation does not run.
+ * Motion is GSAP (public/js/hareket.js). Only the hero intro starts hidden, and only while
+ * <html> has the "hareket" class: the inline script in nuxt.config.ts adds it when motion is
+ * allowed and removes it if GSAP has not arrived in 2.5 seconds.
  */
-@keyframes block-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 14vh, 0);
-  }
+.hareket .hero h1,
+.hareket .hero-lead,
+.hareket .hero-note,
+.hareket .hero-stage > * {
+  visibility: hidden;
 }
 
-@keyframes shutter {
-  from {
-    clip-path: inset(100% 0 0 0 round var(--r));
-  }
-  to {
-    clip-path: inset(0 0 0 0 round var(--r));
-  }
-}
-
-@keyframes settle {
-  from {
-    transform: scale(1.12);
-  }
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 28px, 0);
-  }
-}
-
-@keyframes drift {
-  to {
-    transform: translate3d(0, 10vh, 0);
-  }
-}
-
+/* The profession switch swaps its panel with CSS. */
 @keyframes swap {
   from {
     opacity: 0;
     transform: translate3d(0, 18px, 0) scale(0.98);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .anim-block {
-    animation: block-in 900ms var(--ease) both;
-    animation-delay: var(--d, 0ms);
-  }
-
-  .anim-shutter {
-    animation: shutter 1100ms var(--ease) 260ms both;
-  }
-
-  .anim-shutter > img {
-    animation: settle 1100ms var(--ease) 260ms both;
-  }
-
-  .anim-swap {
-    animation: swap 520ms var(--ease) both;
-  }
-
-  @supports (animation-timeline: view()) {
-    .rise,
-    .rise-2,
-    .rise-3 {
-      animation: rise linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 55%;
-    }
-
-    .rise-2 {
-      animation-range: entry 8% entry 65%;
-    }
-
-    .rise-3 {
-      animation-range: entry 16% entry 75%;
-    }
-
-    .anim-drift {
-      animation: drift linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 100vh;
-    }
   }
 }

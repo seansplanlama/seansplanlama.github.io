@@ -4,10 +4,16 @@ import { legalPages } from './app/site';
 
 // Static site for GitHub Pages: every page is prerendered and ships without Nuxt's
 // JavaScript, so the site loads no script, cookie or font from a third party (S13-02 1.11).
-// The one script is the inline theme memory below; scripts/check-site.mjs allows only it.
+// Its scripts: the inline theme memory and motion switch below, and GSAP with the page's
+// motion (public/vendor/gsap, public/js/hareket.js), all served from this site.
+// scripts/check-site.mjs allows only these.
 
 // Remembers the theme choice (ThemeSwitch.vue) in localStorage for the next page. Without
 // it the switch still works on the current page: CSS reads the checked radio.
+// Adds the "hareket" class (main.css hides the hero until GSAP plays its intro) only when
+// motion is allowed, and takes it away if GSAP has not started within 2.5 seconds.
+const motionScript = `(function(){var d=document.documentElement;if(matchMedia('(prefers-reduced-motion: no-preference)').matches){d.classList.add('hareket');setTimeout(function(){if(!window.seansHareket)d.classList.remove('hareket')},2500)}})();`;
+
 const themeScript = `(function(){var d=document.documentElement,k='seans-tema';try{var t=localStorage.getItem(k);if(t==='acik'||t==='koyu')d.dataset.tema=t}catch(e){}document.addEventListener('DOMContentLoaded',function(){var c=d.dataset.tema||'sistem';document.querySelectorAll('input[name=tema]').forEach(function(i){i.checked=i.value===c;i.addEventListener('change',function(){var v=i.value;if(v==='sistem')delete d.dataset.tema;else d.dataset.tema=v;try{v==='sistem'?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}})})})})();`;
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
@@ -41,7 +47,14 @@ export default defineNuxtConfig({
         { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
-      script: [{ id: 'tema', innerHTML: themeScript, tagPosition: 'head' }],
+      script: [
+        { id: 'tema', innerHTML: themeScript, tagPosition: 'head' },
+        { id: 'hareket', innerHTML: motionScript, tagPosition: 'head' },
+        { src: '/vendor/gsap/gsap.min.js', defer: true, tagPosition: 'head' },
+        { src: '/vendor/gsap/ScrollTrigger.min.js', defer: true, tagPosition: 'head' },
+        { src: '/vendor/gsap/SplitText.min.js', defer: true, tagPosition: 'head' },
+        { src: '/js/hareket.js', defer: true, tagPosition: 'head' },
+      ],
     },
   },
   nitro: {

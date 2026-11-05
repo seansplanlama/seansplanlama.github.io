@@ -28,7 +28,7 @@ const letters = [
   <footer class="mt-auto pt-24 sm:pt-36">
     <div class="wrap">
       <p class="sr-only">Seans</p>
-      <svg class="name-blocks rise" viewBox="0 0 1000 300" aria-hidden="true" focusable="false">
+      <svg class="name-blocks" viewBox="0 0 1000 300" aria-hidden="true" focusable="false">
         <g v-for="item in letters" :key="item.letter + item.x">
           <rect
             :x="item.x"
