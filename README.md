@@ -3,8 +3,8 @@
 Tek sayfalık tanıtım sitesi ve yasal metin sayfaları. Yayın adresi `https://seansplanlama.github.io` (S13-02 K-3 b, 30 Ekim 2026). Görev: [#115](https://github.com/MrKacmaz/ozel-ders-mobil/issues/115). Metin kaynağı: [S13-02 landing taslağı](https://github.com/MrKacmaz/ozel-ders-mobil/blob/master/docs/marketing/s13-02-landing-taslagi.md).
 
 - **Yığın:** Nuxt 4 ve Tailwind CSS 4. Bütün sayfalar build sırasında HTML'e çevrilir (`nuxt generate`), sunucu yok.
-- **Tek betik: tema hafızası.** `features.noScripts` sayfalardan Nuxt'ın betiklerini çıkarır. SSS `<details>`, meslek seçici ve tema seçici radyo düğmeleriyle CSS'te çalışır. Sayfada kalan tek betik `nuxt.config.ts`'teki satır içi tema betiğidir (5 Kasım 2026): seçilen temayı `localStorage`'da `seans-tema` anahtarıyla tutar, sonraki sayfada aynı temayla açar. Çerez değildir, ağa çıkmaz; betik çalışmazsa seçici o sayfada yine çalışır, yalnız hatırlamaz. Bir de tarayıcıya aynı sitedeki sayfaları önceden yükleme ipucu veren `speculationrules` bloğu var, o çalışan bir betik değildir.
-- **Üçüncü taraf yok.** Çerez, ziyaretçi analizi, gömülü form ya da başka bir siteden yüklenen yazı tipi, betik veya görsel yok. Nunito (`@fontsource-variable/nunito`) ve Ionicons build'e girer. Gizlilik politikası taslağı bölüm 6'daki "Sitemizde çerez, reklam ya da ziyaretçi analizi aracı kullanılmaz" cümlesi bu yüzden doğru; `scripts/check-site.mjs` bunu her build'de denetler.
+- **Betikler.** `features.noScripts` sayfalardan Nuxt'ın betiklerini çıkarır. Sayfada dört şey çalışır, hepsi bu siteden gelir: satır içi tema hafızası (seçilen temayı `localStorage`'da `seans-tema` anahtarıyla tutar; çerez değildir, ağa çıkmaz), satır içi hareket anahtarı (hareket izinliyse `<html>`'e `hareket` sınıfını ekler, GSAP 2,5 saniyede gelmezse geri alır), GSAP (`public/vendor/gsap`) ve sayfanın hareketi (`public/js/hareket.js`). Sayfa betiksiz de eksiksiz okunur: SSS `<details>`, meslek ve tema seçicileri radyo düğmeleriyle CSS'te çalışır, adım kartları CSS `sticky` ile yığılır; betik yalnız temayı hatırlamayı ve hareketi ekler. Bir de tarayıcıya aynı sitedeki sayfaları önceden yükleme ipucu veren `speculationrules` bloğu var, o çalışan bir betik değildir.
+- **Üçüncü taraf yok.** Çerez, ziyaretçi analizi, gömülü form ya da başka bir siteden yüklenen yazı tipi, betik veya görsel yok. Nunito (`@fontsource-variable/nunito`) ve Ionicons build'e girer; GSAP (`gsap` npm paketi, sürüm `package.json`'da sabit, GSAP Standard ücretsiz lisansı) `scripts/vendor.mjs` ile `public/vendor/gsap`'e kopyalanıp bu siteden sunulur, CDN kullanılmaz. Gizlilik politikası taslağı bölüm 6'daki "Sitemizde çerez, reklam ya da ziyaretçi analizi aracı kullanılmaz" cümlesi bu yüzden doğru; `scripts/check-site.mjs` bunu her build'de denetler.
 - **Uygulama reklamlı, site reklamsız** (S12-26, 3 Kasım 2026). Uygulama kişiselleştirilmemiş reklam gösterir (S12-16); sitenin kendisinde reklam, çerez ve analiz yok. "Reklamsız" sayfada uygulama için geçmez (S13-02 1.11), denetim bunu da yakalar. Sitenin kökündeki `app-ads.txt` AdMob'un yayıncıyı doğruladığı düz metin dosyasıdır, sayfaya bir şey eklemez.
 - **Barındırma kaydı.** GitHub, Pages sitesini ziyaret edenin IP adresini güvenlik için kaydediyor, ziyaretçi GitHub'a giriş yapmış olsun olmasın ([GitHub Docs: What is GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), "Data collection", 31 Ekim 2026'da okundu). Gizlilik politikasındaki `[BARINDIRMA HİZMETİ]` bu yüzden GitHub, Inc. (ABD) olur.
 
@@ -16,7 +16,13 @@ Sayfa logodan çıkar: işaretin arkasındaki üç takvim bloğu (köşesi yuvar
 - **Tema.** Üst bardaki seçici: Cihazın ayarı (varsayılan), Açık, Koyu. Yalnız `:root`'un `color-scheme` değeri değişir. `light-dark()` bilmeyen tarayıcı (Safari 17.5 öncesi) seçiciyi görmez, cihazın ayarıyla açılır.
 - **Meslekler.** Dört meslek grubu bir anahtarla seçilir; alan o grubun blok rengine döner, o grubun sözcükleri ve Bugün ekranı gelir. `:has()` bilmeyen tarayıcıda anahtar gizlenir, dört grup alt alta görünür.
 - **Yazı.** Yalnız Nunito, beş boy: büyük başlık, bölüm başlığı, ara başlık, giriş, gövde (17 px).
-- **Hareket.** Yalnız CSS: üst alanda bloklar sırayla girer ve ekran perde gibi açılır; bölümler ekrana girdikçe başlık, metin ve görsel sırayla yükselir (`animation-timeline: view()`, destekleyen tarayıcıda); `prefers-reduced-motion` açıkken hiçbiri çalışmaz.
+- **Hareket (GSAP, `gpt-taste` skill'inin bölüm 5'i).** `public/js/hareket.js`, GSAP 3 ile ScrollTrigger ve SplitText:
+  - Üst alan: başlık maskenin arkasından satır satır yükselir, işaretin blokları sırayla gelir, Bugün ekranı perde gibi açılır; aşağı kaydırınca bloklar farklı hızlarda ayrılır (scrub).
+  - Neler yapar: geniş ekranda başlık solda sabit kalır, karolar sağda akar (pin). Ekran kırpımları küçük başlayıp görünüme girerken büyür, çıkarken solar.
+  - Nasıl çalışır: adım kartları CSS `sticky` ile üst üste yığılır, her kart bir öncekinin başlığını sekme gibi açık bırakır; GSAP alttaki kartı geri iter ve karartır.
+  - Bilgilerin telefonunda: panel büyüyerek açılır, giriş paragrafı okundukça kelime kelime netleşir (scrub).
+  - Alt bilgi: "Seans" bloklarının her biri sırayla yerine yükselir. Bölüm başlıkları, metinler ve görseller ekrana girdikçe sırayla yükselir.
+  - `prefers-reduced-motion: reduce` açıkken hiçbiri çalışmaz (`gsap.matchMedia`), sayfa son haliyle durur. Meslek değişince panelin gelişi CSS'tir.
 
 ## Neden ayrı depo
 
@@ -35,8 +41,8 @@ Node 24 gerekir (`.nvmrc`; Nuxt 4.6 Node 22.22.3 ya da 24.15 ve üstünü istiyo
 
 ```bash
 npm install
-npm run dev          # geliştirme sunucusu, http://localhost:3000
-npm run generate     # .output/public altında statik site, ardından scripts/check-site.mjs
+npm run dev          # GSAP'ı public/vendor'a kopyalar, geliştirme sunucusu http://localhost:3000
+npm run generate     # GSAP'ı kopyalar, .output/public altında statik site, ardından scripts/check-site.mjs
 npm run preview      # üretilen siteyi http://localhost:4173 adresinde açar (python3)
 npm run typecheck    # vue-tsc
 npm run format:check # Prettier (düzeltme: npm run format)
@@ -58,6 +64,8 @@ npm run format:check # Prettier (düzeltme: npm run format)
 | `public/app-ads.txt` | AdMob yayıncı doğrulaması (aşağıda) |
 | `public/paylasim.png` | Paylaşım görseli, 1200 × 630 (S12-05, `docs/design/magaza/paylasim-1200x630.png`) |
 | `public/favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | İşaret (`docs/design/magaza/ikon/isaret.svg`, `ios-acik.png`) |
+| `public/js/hareket.js` | Sayfanın hareketi (GSAP) |
+| `public/vendor/gsap/` | GSAP dosyaları; depoda yok, `scripts/vendor.mjs` her `dev` ve `generate`'te `node_modules`'tan kopyalar |
 | `scripts/check-site.mjs` | Üretilen siteyi kararlara göre denetler, hata varsa yayını durdurur |
 | `.github/workflows/deploy.yml` | Yayın iş akışı (`Yayın`): `main`'e her push'ta biçim, tip, build ve denetim; geçerse GitHub Pages'e yayın |
 
@@ -89,7 +97,7 @@ Sayfanın üç hali:
 
 Her `npm run generate` sonunda çalışır:
 
-- Bütün sayfalar `lang="tr"`, başlıklı; tema betiğinden başka betik yok, tema betiği ağa ya da çereze dokunmuyor ve 900 karakteri geçmiyor; başka bir siteden yüklenen dosya yok; büyük harf dönüşümü yok (ı/İ).
+- Bütün sayfalar `lang="tr"`, başlıklı; yalnız izinli betikler var (satır içi `tema` ve `hareket`, `public/vendor/gsap`'teki üç GSAP dosyası, `public/js/hareket.js`), satır içi betikler ağa ya da çereze dokunmuyor ve 900 karakteri geçmiyor, `hareket.js` ağa, çereze ve `localStorage`'a dokunmuyor; başka bir siteden yüklenen dosya yok; büyük harf dönüşümü yok (ı/İ).
 - Landing metninde taslak bölüm 4'ün yasakladığı ifadeler yok ("güvenli", "en iyi", "yakında", "Seans Pro", koşulsuz "Google Takvim'e yansır", uyarı dışında "şifreli", "reklamsız", "reklam yok", "veri paylaşılmaz", "anonim" vb.), düz kesme işareti yok (’ kullanılır), köşeli parantezli yer tutucu yok.
 - Üretilen hiçbir dosyada reklam, çerez ya da analiz izi yok (`adsbygoogle`, `doubleclick`, `googletagmanager`, `document.cookie`, `<iframe>` vb.): site reklamsız kalır.
 - `app-ads.txt` kökte ve içinde yalnız tek bir AdMob satırı var.
