@@ -3,16 +3,22 @@
 import {
   arrowForward,
   chatbubblesOutline,
+  contrastOutline,
+  moonOutline,
   pawOutline,
   schoolOutline,
+  sunnyOutline,
   trophyOutline,
 } from 'ionicons/icons';
 
 export const icons = {
   arrowForward,
   chatbubblesOutline,
+  contrastOutline,
+  moonOutline,
   pawOutline,
   schoolOutline,
+  sunnyOutline,
   trophyOutline,
 };
 

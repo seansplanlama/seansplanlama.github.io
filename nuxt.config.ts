@@ -2,8 +2,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 import { legalPages } from './app/site';
 
-// Static site for GitHub Pages: every page is prerendered and ships without JavaScript,
-// so the site loads no script, cookie or font from a third party (S13-02 1.11).
+// Static site for GitHub Pages: every page is prerendered and ships without Nuxt's
+// JavaScript, so the site loads no script, cookie or font from a third party (S13-02 1.11).
+// The one script is the inline theme memory below; scripts/check-site.mjs allows only it.
+
+// Remembers the theme choice (ThemeSwitch.vue) in localStorage for the next page. Without
+// it the switch still works on the current page: CSS reads the checked radio.
+const themeScript = `(function(){var d=document.documentElement,k='seans-tema';try{var t=localStorage.getItem(k);if(t==='acik'||t==='koyu')d.dataset.tema=t}catch(e){}document.addEventListener('DOMContentLoaded',function(){var c=d.dataset.tema||'sistem';document.querySelectorAll('input[name=tema]').forEach(function(i){i.checked=i.value===c;i.addEventListener('change',function(){var v=i.value;if(v==='sistem')delete d.dataset.tema;else d.dataset.tema=v;try{v==='sistem'?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}})})})})();`;
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
   devtools: { enabled: false },
@@ -36,6 +41,7 @@ export default defineNuxtConfig({
         { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
+      script: [{ id: 'tema', innerHTML: themeScript, tagPosition: 'head' }],
     },
   },
   nitro: {

@@ -7,7 +7,8 @@
  * palette keys of the same name (S2-02 2.2 and 2.3: mark, fill, on-fill), so the page
  * uses no colour the app does not have. Mint is the logo's dot (teal mark, dark theme).
  *
- * Every colour is light-dark(), so the page follows the device's colour scheme.
+ * Every colour is light-dark(): the theme switch only changes color-scheme on :root.
+ * System is the default; "Açık" and "Koyu" pin a scheme (ThemeSwitch.vue, nuxt.config.ts).
  */
 :root {
   color-scheme: light dark;
@@ -63,7 +64,17 @@
   --t-body: 1.0625rem;
 }
 
-/* A browser without light-dark() (Safari before 17.5) gets the light scheme. */
+:root[data-tema='acik'],
+:root:has(#tema-acik:checked) {
+  color-scheme: light;
+}
+
+:root[data-tema='koyu'],
+:root:has(#tema-koyu:checked) {
+  color-scheme: dark;
+}
+
+/* A browser without light-dark() (Safari before 17.5) gets the system scheme only. */
 @supports not (color: light-dark(#000, #fff)) {
   :root {
     --ground: #f4f2ef;
@@ -91,6 +102,10 @@
     --on-step-b: #ffffff;
     --on-step-c: #0b4640;
     --note: #fff4e0;
+  }
+
+  .tema {
+    display: none !important;
   }
 }
 
@@ -327,7 +342,7 @@
 }
 
 /*
- * Motion. Everything is CSS: the page has no script.
+ * Motion. Everything is CSS: the page has no script beyond the theme memory.
  * Entrances run on load (hero) or as a section scrolls in (scroll-driven animations,
  * where supported). Content is never hidden when an animation does not run.
  */

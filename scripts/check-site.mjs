@@ -117,10 +117,19 @@ for (const file of htmlFiles()) {
   if (!/<html\s+lang="tr"/.test(html)) fail(`${file}: html lang is not "tr"`);
   if (!/<title>[^<]+<\/title>/.test(html)) fail(`${file}: no <title>`);
 
-  // No JavaScript and nothing loaded from another host (privacy policy bölüm 6).
-  // Speculation rules are allowed: a same-site prefetch hint, not a script.
-  for (const [tag] of html.matchAll(/<script\b[^>]*>/gi)) {
-    if (!tag.includes('type="speculationrules"')) fail(`${file}: contains ${tag}`);
+  // No JavaScript beyond the inline theme memory, and nothing loaded from another host
+  // (privacy policy bölüm 6). Speculation rules are allowed: a same-site prefetch hint.
+  // The theme script may only touch localStorage and the theme radios: no network, no cookie.
+  for (const [whole, tag, body] of html.matchAll(/(<script\b[^>]*>)([\s\S]*?)<\/script>/gi)) {
+    if (tag.includes('type="speculationrules"')) continue;
+    if (tag !== '<script id="tema">') {
+      fail(`${file}: contains ${tag}`);
+      continue;
+    }
+    if (/fetch|XMLHttpRequest|sendBeacon|WebSocket|cookie|https?:|\/\//i.test(body)) {
+      fail(`${file}: the theme script reaches beyond localStorage`);
+    }
+    if (whole.length > 900) fail(`${file}: the theme script grew (${whole.length} chars)`);
   }
   for (const [, url] of html.matchAll(
     /<(?:link|img|source|iframe)\b[^>]*?(?:href|src)="([^"]+)"/g,

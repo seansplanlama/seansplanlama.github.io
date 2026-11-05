@@ -21,6 +21,7 @@ const links = [
         </li>
       </ul>
     </nav>
+    <ThemeSwitch />
   </header>
 </template>
 
