@@ -27,26 +27,43 @@
     return gsap.utils.toArray(selector, scope);
   };
 
-  var mm = gsap.matchMedia();
+  // SplitText measures lines, so it waits for Nunito: split with the fallback font, the
+  // headline would show four lines on a first visit until the font arrives. At most 1.5 s;
+  // the hero stays hidden meanwhile (the inline failsafe gives up at 2.5 s).
+  var fontsReady =
+    document.fonts && document.fonts.ready
+      ? Promise.race([
+          document.fonts.ready,
+          new Promise(function (resolve) {
+            setTimeout(resolve, 1500);
+          }),
+        ])
+      : Promise.resolve();
 
-  mm.add('(prefers-reduced-motion: reduce)', function () {
-    root.classList.remove('hareket');
-  });
+  fontsReady.then(start);
 
-  mm.add('(prefers-reduced-motion: no-preference)', function () {
-    heroIntro();
-    heroDrift();
-    reveals();
-    imagesScaleAndFade();
-    stackSteps();
-    aboutPanel();
-    nameBlocks();
-  });
+  function start() {
+    var mm = gsap.matchMedia();
 
-  // Pinning needs the two-column layout.
-  mm.add('(prefers-reduced-motion: no-preference) and (min-width: 1024px)', function () {
-    pinFeaturesHead();
-  });
+    mm.add('(prefers-reduced-motion: reduce)', function () {
+      root.classList.remove('hareket');
+    });
+
+    mm.add('(prefers-reduced-motion: no-preference)', function () {
+      heroIntro();
+      heroDrift();
+      reveals();
+      imagesScaleAndFade();
+      stackSteps();
+      aboutPanel();
+      nameBlocks();
+    });
+
+    // Pinning needs the two-column layout.
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 1024px)', function () {
+      pinFeaturesHead();
+    });
+  }
 
   /* Hero: the headline rises line by line from behind a mask, the mark's blocks come in one
      after another and the Bugün screen opens like a shutter. */
