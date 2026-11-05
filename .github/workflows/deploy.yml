@@ -1,6 +1,4 @@
-# Builds the site and publishes it to GitHub Pages. Inert while landing/ lives inside the
-# app repository (GitHub only runs workflows from the repository root); it starts working
-# once this folder becomes the root of seansplanlama/seansplanlama.github.io (README.md).
+# Builds the site, checks it against the launch decisions and publishes it to GitHub Pages.
 name: Yayın
 
 on:
