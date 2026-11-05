@@ -5,12 +5,7 @@ defineProps<{ href: string }>();
 </script>
 
 <template>
-  <a
-    :href="href"
-    target="_blank"
-    rel="noopener"
-    class="inline-flex min-h-12 items-center gap-2 rounded-full bg-accent px-6 py-3 font-semibold text-on-accent no-underline transition hover:opacity-90"
-  >
+  <a :href="href" target="_blank" rel="noopener" class="btn">
     Bekleme listesine yazıl
     <IonIcon name="arrowForward" class="size-5" />
   </a>

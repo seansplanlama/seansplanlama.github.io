@@ -4,3 +4,6 @@ node_modules/
 .data/
 dist
 .DS_Store
+
+# design-taste-frontend working files
+.taste-skill/

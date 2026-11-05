@@ -25,15 +25,15 @@ useHead({ link: [{ rel: 'canonical', href: `${site.url}${page.path}` }] });
 </script>
 
 <template>
-  <main class="mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
-    <article v-if="html" class="legal-text" v-html="html" />
+  <main class="wrap pt-[8svh]">
+    <article v-if="html" class="legal-text max-w-[72ch]" v-html="html" />
     <template v-else>
-      <h1 class="text-3xl font-bold sm:text-4xl">{{ page.title }}</h1>
-      <p class="mt-6 rounded-2xl bg-note p-5 leading-7">
+      <h1 class="t-h2 max-w-[20ch]">{{ page.title }}</h1>
+      <p class="t-lead mt-8 max-w-[60ch] rounded-[var(--r)] bg-note p-6">
         Bu metin hazırlanıyor. Hukuki incelemeden geçtikten sonra bu adreste yayınlanacak.
       </p>
-      <p class="mt-6">
-        <NuxtLink to="/" class="font-semibold text-accent underline">Ana sayfaya dön</NuxtLink>
+      <p class="mt-10">
+        <NuxtLink to="/" class="btn">Ana sayfaya dön</NuxtLink>
       </p>
     </template>
   </main>

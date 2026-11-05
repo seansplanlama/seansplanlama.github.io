@@ -3,27 +3,17 @@
 import {
   arrowForward,
   chatbubblesOutline,
-  lockClosedOutline,
   pawOutline,
-  phonePortraitOutline,
-  repeatOutline,
   schoolOutline,
-  todayOutline,
   trophyOutline,
-  walletOutline,
 } from 'ionicons/icons';
 
 export const icons = {
   arrowForward,
   chatbubblesOutline,
-  lockClosedOutline,
   pawOutline,
-  phonePortraitOutline,
-  repeatOutline,
   schoolOutline,
-  todayOutline,
   trophyOutline,
-  walletOutline,
 };
 
 export type IconName = keyof typeof icons;
